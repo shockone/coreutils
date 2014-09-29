@@ -51,7 +51,7 @@ cabal-version:       >=1.10
 
 executable ls
   hs-source-dirs:   src
-  
+
   -- .hs or .lhs file containing the Main module.
   main-is:             ls.hs
 
@@ -62,7 +62,7 @@ executable ls
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.8
+  build-depends:       base == 4.7.*, directory == 1.2.*, pretty == 1.*
 
   -- Directories containing source files.
   -- hs-source-dirs:
