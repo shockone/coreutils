@@ -70,3 +70,10 @@ executable ls
   -- Base language which the package is written in.
   default-language:    Haskell2010
   ghc-options:         -Wall -Werror -O2
+
+executable cat
+  hs-source-dirs:   src
+  main-is:          cat.hs
+  build-depends:    base == 4.7.*
+  default-language: Haskell2010
+  ghc-options:      -Wall -Werror -O2
