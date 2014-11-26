@@ -4,7 +4,8 @@ import System.Directory
 import System.Environment
 
 main :: IO ()
-main = do
-  args  <- getArgs
-  files <- getDirectoryContents (head args)
-  print files
+main = getArgs >>= getDirectoryContents . firstDirectory >>= mapM_ putStrLn
+
+firstDirectory :: [String] -> String
+firstDirectory [] = "."
+firstDirectory xs = head xs
