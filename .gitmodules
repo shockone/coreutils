@@ -1,0 +1,3 @@
+[submodule "gnu"]
+	path = gnu
+	url = http://git.sv.gnu.org/cgit/coreutils.git
