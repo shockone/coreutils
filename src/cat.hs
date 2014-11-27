@@ -1,6 +1,7 @@
 module Main where
 
 import System.Environment
+import Control.Monad
 
 main :: IO ()
-main = getArgs >>= mapM readFile >>= putStr . concat
+main = getArgs >>= mapM_ (readFile >=> putStr)
