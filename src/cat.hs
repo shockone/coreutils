@@ -4,23 +4,45 @@ import Control.Monad
 import Options.Applicative
 
 type Filename = String
-data LineNumbering = WithNumbers | WithoutNumbers
-data Arguments = Arguments [Filename] LineNumbering
-
-sample :: Parser Arguments
-sample = Arguments
-  <$> some (argument str (metavar "FILES..."))
-  <*> flag WithoutNumbers WithNumbers
-      ( long "number" <> short 'n' <> help "number all output lines" )
-
-greet :: Arguments -> IO ()
-greet (Arguments filenames WithoutNumbers) = mapM_ (readFile >=> putStr) filenames
-greet (Arguments _ WithNumbers) = putStrLn "With numbers!"
+type FileContent = [String]
+data Option = Number | All | NonBlank
+data Arguments = Arguments [Filename] [Option]
 
 main :: IO ()
 main = execParser opts >>= greet
-  where opts = info (helper <*> sample)
+  where opts = info (helper <*> argumentsParser)
                     ( fullDesc
                       <> progDesc "Print a greeting for TARGET"
                       <> header "hello - a test for optparse-applicative"
                     )
+
+
+number :: Parser Option
+number = flag' Number $ long "number" <> short 'n' <> help "number all output lines"
+
+showAll :: Parser Option
+showAll = flag' All $ long "show-all" <> short 'A' <> help "equivalent to -vET"
+
+argumentsParser :: Parser Arguments
+argumentsParser = Arguments
+  <$> some (argument str (metavar "FILES..."))
+  <*> (many $ number <|> showAll)
+
+greet :: Arguments -> IO ()
+greet (Arguments filenames options) = mapM_ (readFile >=> putStrLn . unlines . (parse options) . lines) filenames
+
+parse :: [Option] -> FileContent -> FileContent
+parse [] content = content
+parse (opt:rest) content = parse rest (apply opt content)
+
+apply :: Option -> FileContent -> FileContent
+apply Number content = addNumbers content
+apply _ content = content
+
+
+addNumbers :: FileContent -> FileContent
+addNumbers content = zipWith cnc [1..] content
+  where numberMaxWidth = (length . show . length $ content) + 1
+        cnc :: Integer -> String -> String
+        cnc num line = pad (show num) ++ line
+        pad num = replicate (numberMaxWidth - length num)' ' ++ num ++ " "
