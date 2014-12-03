@@ -31,7 +31,7 @@ argumentsParser = Arguments
   <*> (many $ number <|> showAll)
 
 greet :: Arguments -> IO ()
-greet (Arguments filenames options) = mapM_ (readFile >=> putStrLn . unlines . (parse (nub options)) . lines) filenames
+greet (Arguments filenames options) = mapM_ (readFile >=> putStr . unlines . (parse (nub options)) . lines) filenames
 
 parse :: [Option] -> FileContent -> FileContent
 parse [] content = content
@@ -44,6 +44,6 @@ apply _ content = content
 
 addNumbers :: FileContent -> FileContent
 addNumbers content = zipWith cnc [1..] content
-  where numberMaxWidth = ceiling . log . fromIntegral . length $ content
+  where numberMaxWidth = (ceiling . log . fromIntegral . length $ content) + 2
         cnc num line = pad (show num) ++ line
-        pad num = replicate (numberMaxWidth - length num)' ' ++ num ++ " "
+        pad num = replicate (numberMaxWidth - length num)' ' ++ num ++ "  "
