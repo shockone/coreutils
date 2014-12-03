@@ -30,21 +30,20 @@ showAll = flag' All $ long "show-all" <> short 'A' <> help "equivalent to -vET"
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
-  <*> (many $ number <|> showAll)
+  <*> many (number <|> showAll)
 
 
 greet :: Arguments -> IO ()
-greet (Arguments filenames options) = mapM_ (readFile >=> putStr . unlines . (parse (nub options)) . lines) filenames
+greet (Arguments filenames options) = mapM_ (readFile >=> putStr . unlines . parse (nub options) . lines) filenames
 
 
 parse :: [Option] -> FileContent -> FileContent
-parse [] content = content
-parse (opt:rest) content = parse rest (apply opt content)
+parse opts content = foldl apply content opts
 
 
-apply :: Option -> FileContent -> FileContent
-apply Number content = addNumbers content
-apply _ content = content
+apply :: FileContent -> Option -> FileContent
+apply content Number = addNumbers content
+apply content _ = content
 
 
 addNumbers :: FileContent -> FileContent
