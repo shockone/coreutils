@@ -3,8 +3,9 @@ module Main where
 import Control.Monad
 import Options.Applicative
 
-type Filename = String
+type Filename    = String
 type FileContent = [String]
+
 data Option = Number | All | NonBlank
 data Arguments = Arguments [Filename] [Option]
 
@@ -42,7 +43,6 @@ apply _ content = content
 
 addNumbers :: FileContent -> FileContent
 addNumbers content = zipWith cnc [1..] content
-  where numberMaxWidth = (length . show . length $ content) + 1
-        cnc :: Integer -> String -> String
+  where numberMaxWidth = ceiling . log . fromIntegral . length $ content
         cnc num line = pad (show num) ++ line
         pad num = replicate (numberMaxWidth - length num)' ' ++ num ++ " "
