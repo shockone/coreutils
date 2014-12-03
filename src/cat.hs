@@ -22,20 +22,25 @@ main = execParser opts >>= greet
 number :: Parser Option
 number = flag' Number $ long "number" <> short 'n' <> help "number all output lines"
 
+
 showAll :: Parser Option
 showAll = flag' All $ long "show-all" <> short 'A' <> help "equivalent to -vET"
+
 
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
   <*> (many $ number <|> showAll)
 
+
 greet :: Arguments -> IO ()
 greet (Arguments filenames options) = mapM_ (readFile >=> putStr . unlines . (parse (nub options)) . lines) filenames
+
 
 parse :: [Option] -> FileContent -> FileContent
 parse [] content = content
 parse (opt:rest) content = parse rest (apply opt content)
+
 
 apply :: Option -> FileContent -> FileContent
 apply Number content = addNumbers content
