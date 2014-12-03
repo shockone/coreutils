@@ -2,11 +2,12 @@ module Main where
 
 import Control.Monad
 import Options.Applicative
+import Data.List(nub)
 
 type Filename    = String
 type FileContent = [String]
 
-data Option = Number | All | NonBlank
+data Option = Number | All | NonBlank deriving (Eq)
 data Arguments = Arguments [Filename] [Option]
 
 main :: IO ()
@@ -30,7 +31,7 @@ argumentsParser = Arguments
   <*> (many $ number <|> showAll)
 
 greet :: Arguments -> IO ()
-greet (Arguments filenames options) = mapM_ (readFile >=> putStrLn . unlines . (parse options) . lines) filenames
+greet (Arguments filenames options) = mapM_ (readFile >=> putStrLn . unlines . (parse (nub options)) . lines) filenames
 
 parse :: [Option] -> FileContent -> FileContent
 parse [] content = content
