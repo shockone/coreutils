@@ -4,50 +4,50 @@ import Control.Monad
 import Options.Applicative
 import Data.List(nub)
 
-type Filename    = String
-type FileContent = [String]
+import Cat.Types
+import Cat.Flags as Flags
+import Cat.Decorators as Decorators
 
-data Option = Number | All | NonBlank deriving (Eq)
-data Arguments = Arguments [Filename] [Option]
 
 main :: IO ()
-main = execParser opts >>= greet
-  where opts = info (helper <*> argumentsParser)
-                    ( fullDesc
-                      <> progDesc "Print a greeting for TARGET"
-                      <> header "hello - a test for optparse-applicative"
-                    )
+main = parseArguments >>= processArguments
 
 
-number :: Parser Option
-number = flag' Number $ long "number" <> short 'n' <> help "number all output lines"
+parseArguments :: IO Arguments
+parseArguments = execParser argumentsParserWithInfo
 
 
-showAll :: Parser Option
-showAll = flag' All $ long "show-all" <> short 'A' <> help "equivalent to -vET"
+argumentsParserWithInfo :: ParserInfo Arguments
+argumentsParserWithInfo = info (helper <*> argumentsParser) description
+
+
+description :: InfoMod Arguments
+description = fullDesc <> progDesc "Print a greeting for TARGET"
+                       <> header "hello - a test for optparse-applicative"
 
 
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
-  <*> many (number <|> showAll)
+  <*> many (Flags.number <|> Flags.showAll)
 
 
-greet :: Arguments -> IO ()
-greet (Arguments filenames options) = mapM_ (readFile >=> putStr . unlines . parse (nub options) . lines) filenames
+processArguments :: Arguments -> IO ()
+processArguments (Arguments filenames options) = concatenatedContent filenames >>= putStr . unlines . parse options
+
+
+concatenatedContent :: [FilePath] -> IO FileContent
+concatenatedContent = liftM (lines . concat) . mapM readFile
 
 
 parse :: [Option] -> FileContent -> FileContent
-parse opts content = foldl apply content opts
+parse opts content = foldl (flip apply) content (sanitize opts)
 
 
-apply :: FileContent -> Option -> FileContent
-apply content Number = addNumbers content
-apply content _ = content
+sanitize :: [Option] -> [Option]
+sanitize = nub
 
 
-addNumbers :: FileContent -> FileContent
-addNumbers content = zipWith cnc [1..] content
-  where numberMaxWidth = (ceiling . log . fromIntegral . length $ content) + 2
-        cnc num line = pad (show num) ++ line
-        pad num = replicate (numberMaxWidth - length num)' ' ++ num ++ "  "
+apply :: Option -> FileContent -> FileContent
+apply Number = Decorators.addNumbers
+apply _ = id
