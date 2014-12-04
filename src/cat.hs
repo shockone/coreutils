@@ -37,7 +37,7 @@ processArguments (Arguments filenames options) = concatenatedContent filenames >
 
 
 concatenatedContent :: [FilePath] -> IO FileContent
-concatenatedContent = liftM (lines . concat) . mapM readFile
+concatenatedContent = mapM readFile >=> return . lines . join
 
 
 parse :: [Option] -> FileContent -> FileContent
