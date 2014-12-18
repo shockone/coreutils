@@ -2,7 +2,7 @@ module Main where
 
 import Control.Monad
 import Options.Applicative
-import Data.List(nub)
+import Data.List(nub, delete)
 
 import Cat.Types
 import Cat.Flags as Flags
@@ -29,7 +29,7 @@ description = fullDesc <> progDesc "Print a greeting for TARGET"
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
-  <*> many (Flags.number <|> Flags.showAll)
+  <*> many (Flags.number <|> Flags.showAll <|> Flags.numberNonBlank)
 
 
 processArguments :: Arguments -> IO ()
@@ -45,9 +45,15 @@ parse opts content = foldl (flip apply) content (sanitize opts)
 
 
 sanitize :: [Option] -> [Option]
-sanitize = nub
+sanitize opts = foldl (\o f -> f o) opts functions
+  where
+    functions = [
+                  nub,
+                  \xs -> if elem NumberNonBlank xs then delete Number xs else xs
+                ]
 
 
 apply :: Option -> FileContent -> FileContent
 apply Number = Decorators.addNumbers
+apply NumberNonBlank = Decorators.addNonBlankNumbers
 apply _ = id
