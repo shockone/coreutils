@@ -14,7 +14,7 @@ numberNonBlank = parser NumberNonBlank 'b' "number-nonblank" "number nonempty ou
 
 
 showAll :: Parser Option
-showAll = parser All 'A' "show-all"  "equivalent to -vET"
+showAll = parser ShowAll 'A' "show-all"  "equivalent to -vET"
 
 
 showEnds :: Parser Option
