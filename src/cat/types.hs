@@ -9,3 +9,8 @@ data Option = ShowAll | NumberNonBlank | ShowEnds
             deriving (Eq)
 
 data Arguments = Arguments [Filename] [Option]
+
+-- A prototype of the future refactoring.
+-- class Option o where
+--   parser :: Option o => Parser o
+--   decorator :: FileContent -> Filecontent
