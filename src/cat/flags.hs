@@ -6,12 +6,20 @@ import Cat.Types
 
 
 number :: Parser Option
-number = flag' Number $ long "number" <> short 'n' <> help "number all output lines"
+number = parser Number 'n' "number" "number all output lines"
 
 
 numberNonBlank :: Parser Option
-numberNonBlank = flag' NumberNonBlank $ long "number-nonblank" <> short 'b' <> help "number nonempty output lines, overrides -n"
+numberNonBlank = parser NumberNonBlank 'b' "number-nonblank" "number nonempty output lines, overrides -n"
 
 
 showAll :: Parser Option
-showAll = flag' All $ long "show-all" <> short 'A' <> help "equivalent to -vET"
+showAll = parser All 'A' "show-all"  "equivalent to -vET"
+
+
+showEnds :: Parser Option
+showEnds = parser ShowEnds 'E' "show-ends" "display $ at end of each line"
+
+
+parser :: Option -> Char -> String -> String -> Parser Option
+parser f s l h = flag' f $ long l <> short s <> help h

@@ -1,6 +1,7 @@
 module Cat.Decorators (
     addNumbers,
-    addNonBlankNumbers
+    addNonBlankNumbers,
+    showEnds
 ) where
 
 import Cat.Types
@@ -13,6 +14,10 @@ addNumbers content = format $ enumerate content
 
 addNonBlankNumbers :: FileContent -> FileContent
 addNonBlankNumbers content = format $ enumerateNonBlank content
+
+
+showEnds :: FileContent -> FileContent
+showEnds = map (++ "$")
 
 
 enumerateNonBlank :: FileContent -> [(Maybe Int, String)]
@@ -47,5 +52,5 @@ pad Nothing maxPaddingWidth = replicate maxPaddingWidth ' ' ++ "  "
 pad (Just number) maxPaddingWidth = padding ++ shownNumber ++ "  "
   where
     padding = replicate paddingWidth ' '
-    paddingWidth = (maxPaddingWidth - length shownNumber + 4)
+    paddingWidth = (maxPaddingWidth - length shownNumber + 3)
     shownNumber = show number

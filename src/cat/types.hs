@@ -3,5 +3,5 @@ module Cat.Types where
 type Filename    = String
 type FileContent = [String]
 
-data Option      = Number | All | NumberNonBlank deriving (Eq)
+data Option      = Number | All | NumberNonBlank | ShowEnds deriving (Eq)
 data Arguments   = Arguments [Filename] [Option]

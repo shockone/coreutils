@@ -29,7 +29,7 @@ description = fullDesc <> progDesc "Print a greeting for TARGET"
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
-  <*> many (Flags.number <|> Flags.showAll <|> Flags.numberNonBlank)
+  <*> many (Flags.number <|> Flags.showAll <|> Flags.numberNonBlank <|> Flags.showEnds)
 
 
 processArguments :: Arguments -> IO ()
@@ -56,4 +56,5 @@ sanitize opts = foldl (\o f -> f o) opts functions
 apply :: Option -> FileContent -> FileContent
 apply Number = Decorators.addNumbers
 apply NumberNonBlank = Decorators.addNonBlankNumbers
+apply ShowEnds = Decorators.showEnds
 apply _ = id
