@@ -51,7 +51,7 @@ concatenatedContent = mapM readFile >=> return . lines . join
 
 
 parse :: [Option] -> FileContent -> FileContent
-parse opts content = foldl (flip Decorators.decorate) content (sanitize opts)
+parse opts content = foldl Decorators.decorate content (sanitize opts)
 
 
 sanitize :: [Option] -> [Option]

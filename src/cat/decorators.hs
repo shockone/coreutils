@@ -4,12 +4,17 @@ import Cat.Types
 import Control.Applicative((<*>))
 
 
-decorate :: Option -> FileContent -> FileContent
-decorate Number content         = format $ enumerate content
-decorate NumberNonBlank content = format $ enumerateNonBlank content
-decorate ShowEnds content       = map (++ "$") content
-decorate SqueezeBlank content   = removeRepeatedBlankLines content
-decorate _ content              = content
+decorate :: FileContent -> Option -> FileContent
+decorate content ShowAll                 = format $ enumerate content
+decorate content NumberNonBlank          = format $ enumerateNonBlank content
+decorate content ShowNonprintingAndEnds  = undefined
+decorate content ShowEnds                = map (++ "$") content
+decorate content Number                  = format $ enumerate content
+decorate content SqueezeBlank            = removeRepeatedBlankLines content
+decorate content ShowNonprintingAndTabs  = undefined
+decorate content ShowTabs                = undefined
+decorate content ShowNonprinting         = undefined
+decorate content U                       = content
 
 
 removeRepeatedBlankLines :: [String] -> [String]
