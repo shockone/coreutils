@@ -5,6 +5,7 @@ type FileContent = [String]
 
 data Option = ShowAll
             | NumberNonBlank
+            | ShowNonprintingAndEnds
             | ShowEnds
             | Number
             | SqueezeBlank

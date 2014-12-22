@@ -5,7 +5,7 @@ import Options.Applicative
 import Data.List(nub, delete)
 
 import Cat.Types
-import Cat.Flags as Flags
+import Cat.Parsers as Parsers
 import Cat.Decorators as Decorators
 
 
@@ -29,11 +29,16 @@ description = fullDesc <> progDesc "Print a greeting for TARGET"
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
-  <*> many (Flags.number
-        <|> Flags.showAll
-        <|> Flags.numberNonBlank
-        <|> Flags.showEnds
-        <|> Flags.squeezeBlank
+  <*> many (Parsers.showAll
+        <|> Parsers.numberNonBlank
+        <|> Parsers.showNonprintingAndEnds
+        <|> Parsers.showEnds
+        <|> Parsers.number
+        <|> Parsers.squeezeBlank
+        <|> Parsers.showNonprintingAndTabs
+        <|> Parsers.showTabs
+        <|> Parsers.showNonprinting
+        <|> Parsers.u
         )
 
 
