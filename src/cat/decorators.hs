@@ -2,6 +2,7 @@ module Cat.Decorators ( decorate ) where
 
 import Cat.Types
 import Control.Applicative((<*>))
+import Data.String.Utils(replace)
 
 
 decorate :: FileContent -> Option -> FileContent
@@ -12,7 +13,7 @@ decorate content ShowEnds                = map (++ "$") content
 decorate content Number                  = format $ enumerate content
 decorate content SqueezeBlank            = removeRepeatedBlankLines content
 decorate content ShowNonprintingAndTabs  = undefined
-decorate content ShowTabs                = undefined
+decorate content ShowTabs                = map (replace "\t" "^I") content
 decorate content ShowNonprinting         = undefined
 decorate content U                       = content
 
