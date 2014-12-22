@@ -29,7 +29,12 @@ description = fullDesc <> progDesc "Print a greeting for TARGET"
 argumentsParser :: Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
-  <*> many (Flags.number <|> Flags.showAll <|> Flags.numberNonBlank <|> Flags.showEnds)
+  <*> many (Flags.number
+        <|> Flags.showAll
+        <|> Flags.numberNonBlank
+        <|> Flags.showEnds
+        <|> Flags.squeezeBlank
+        )
 
 
 processArguments :: Arguments -> IO ()
@@ -49,5 +54,6 @@ sanitize opts = foldl (\o f -> f o) opts functions
   where
     functions = [
                   nub,
-                  \xs -> if elem NumberNonBlank xs then delete Number xs else xs
+                  \xs -> if elem NumberNonBlank xs then delete Number xs else xs,
+                  \xs -> if elem SqueezeBlank xs then SqueezeBlank:(delete SqueezeBlank xs) else xs
                 ]

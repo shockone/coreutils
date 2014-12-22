@@ -8,7 +8,15 @@ decorate :: Option -> FileContent -> FileContent
 decorate Number content         = format $ enumerate content
 decorate NumberNonBlank content = format $ enumerateNonBlank content
 decorate ShowEnds content       = map (++ "$") content
+decorate SqueezeBlank content   = removeRepeatedBlankLines content
 decorate _ content              = content
+
+
+removeRepeatedBlankLines :: [String] -> [String]
+removeRepeatedBlankLines [] = []
+removeRepeatedBlankLines [x] = [x]
+removeRepeatedBlankLines ("":"":rest) = removeRepeatedBlankLines ("":rest)
+removeRepeatedBlankLines (x:rest) = x:removeRepeatedBlankLines rest
 
 
 enumerateNonBlank :: FileContent -> [(Maybe Int, String)]
