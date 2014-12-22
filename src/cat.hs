@@ -41,7 +41,7 @@ concatenatedContent = mapM readFile >=> return . lines . join
 
 
 parse :: [Option] -> FileContent -> FileContent
-parse opts content = foldl (flip apply) content (sanitize opts)
+parse opts content = foldl (flip Decorators.decorate) content (sanitize opts)
 
 
 sanitize :: [Option] -> [Option]
@@ -51,10 +51,3 @@ sanitize opts = foldl (\o f -> f o) opts functions
                   nub,
                   \xs -> if elem NumberNonBlank xs then delete Number xs else xs
                 ]
-
-
-apply :: Option -> FileContent -> FileContent
-apply Number = Decorators.addNumbers
-apply NumberNonBlank = Decorators.addNonBlankNumbers
-apply ShowEnds = Decorators.showEnds
-apply _ = id

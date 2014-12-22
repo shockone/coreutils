@@ -1,23 +1,14 @@
-module Cat.Decorators (
-    addNumbers,
-    addNonBlankNumbers,
-    showEnds
-) where
+module Cat.Decorators ( decorate ) where
 
 import Cat.Types
 import Control.Applicative((<*>))
 
 
-addNumbers :: FileContent -> FileContent
-addNumbers content = format $ enumerate content
-
-
-addNonBlankNumbers :: FileContent -> FileContent
-addNonBlankNumbers content = format $ enumerateNonBlank content
-
-
-showEnds :: FileContent -> FileContent
-showEnds = map (++ "$")
+decorate :: Option -> FileContent -> FileContent
+decorate Number content         = format $ enumerate content
+decorate NumberNonBlank content = format $ enumerateNonBlank content
+decorate ShowEnds content       = map (++ "$") content
+decorate _ content              = content
 
 
 enumerateNonBlank :: FileContent -> [(Maybe Int, String)]
