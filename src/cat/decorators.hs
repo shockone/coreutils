@@ -6,7 +6,7 @@ import Data.String.Utils(replace)
 
 
 decorate :: FileContent -> Option -> FileContent
-decorate content ShowAll                 = format $ enumerate content
+decorate content ShowAll                 = undefined
 decorate content NumberNonBlank          = format $ enumerateNonBlank content
 decorate content ShowNonprintingAndEnds  = undefined
 decorate content ShowEnds                = map (++ "$") content
@@ -53,7 +53,7 @@ formatLine paddingWidth (lineNumber, line) = pad lineNumber paddingWidth ++ line
 
 
 pad :: Maybe Int -> Int -> String
-pad Nothing maxPaddingWidth = replicate maxPaddingWidth ' ' ++ "\t"
+pad Nothing maxPaddingWidth = ""
 pad (Just number) maxPaddingWidth = padding ++ shownNumber ++ "\t"
   where
     padding = replicate paddingWidth ' '
