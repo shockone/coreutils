@@ -60,8 +60,8 @@ sanitize opts = foldl (\o f -> f o) opts functions
   where
     functions = [
                   nub,
-                  \xs -> if elem ShowTabs xs then ShowTabs:(delete ShowTabs xs) else xs,
-                  \xs -> if elem NumberNonBlank xs then delete Number xs else xs,
-                  \xs -> if elem SqueezeBlank xs then SqueezeBlank:(delete SqueezeBlank xs) else xs,
-                  \xs -> if elem ShowEnds xs then (delete ShowEnds xs) ++ [ShowEnds] else xs
+                  \xs -> if ShowTabs `elem` xs then ShowTabs:delete ShowTabs xs else xs,
+                  \xs -> if NumberNonBlank `elem` xs then delete Number xs else xs,
+                  \xs -> if SqueezeBlank `elem` xs then SqueezeBlank:delete SqueezeBlank xs else xs,
+                  \xs -> if ShowEnds `elem` xs then delete ShowEnds xs ++ [ShowEnds] else xs
                 ]
