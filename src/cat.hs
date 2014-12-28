@@ -1,13 +1,13 @@
 {-# LANGUAGE UnicodeSyntax #-}
 module Main where
 
-import           Control.Monad
-import           Data.List           (delete, nub)
-import           Options.Applicative
+import Control.Monad
+import Data.List           (delete, nub)
+import Options.Applicative
 
-import           Cat.Decorators      as Decorators
-import           Cat.Parsers         as Parsers
-import           Cat.Types
+import Cat.Decorators as Decorators
+import Cat.Parsers    as Parsers
+import Cat.Types
 
 
 main ∷ IO ()
