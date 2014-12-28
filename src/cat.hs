@@ -1,32 +1,33 @@
+{-# LANGUAGE UnicodeSyntax #-}
 module Main where
 
-import Control.Monad
-import Options.Applicative
-import Data.List(nub, delete)
+import           Control.Monad
+import           Data.List           (delete, nub)
+import           Options.Applicative
 
-import Cat.Types
-import Cat.Parsers as Parsers
-import Cat.Decorators as Decorators
+import           Cat.Decorators      as Decorators
+import           Cat.Parsers         as Parsers
+import           Cat.Types
 
 
-main :: IO ()
+main ∷ IO ()
 main = parseArguments >>= processArguments
 
 
-parseArguments :: IO Arguments
+parseArguments ∷ IO Arguments
 parseArguments = execParser argumentsParserWithInfo
 
 
-argumentsParserWithInfo :: ParserInfo Arguments
+argumentsParserWithInfo ∷ ParserInfo Arguments
 argumentsParserWithInfo = info (helper <*> argumentsParser) description
 
 
-description :: InfoMod Arguments
+description ∷ InfoMod Arguments
 description = fullDesc <> progDesc "Print a greeting for TARGET"
                        <> header "hello - a test for optparse-applicative"
 
 
-argumentsParser :: Parser Arguments
+argumentsParser ∷ Parser Arguments
 argumentsParser = Arguments
   <$> some (argument str (metavar "FILES..."))
   <*> many (Parsers.showAll
@@ -42,19 +43,19 @@ argumentsParser = Arguments
         )
 
 
-processArguments :: Arguments -> IO ()
+processArguments ∷ Arguments → IO ()
 processArguments (Arguments filenames options) = concatenatedContent filenames >>= putStr . unlines . parse options
 
 
-concatenatedContent :: [FilePath] -> IO FileContent
+concatenatedContent ∷ [FilePath] → IO FileContent
 concatenatedContent = mapM readFile >=> return . lines . join
 
 
-parse :: [Option] -> FileContent -> FileContent
+parse ∷ [Option] → FileContent → FileContent
 parse opts content = foldl Decorators.decorate content (sanitize opts)
 
 
-sanitize :: [Option] -> [Option]
+sanitize ∷ [Option] → [Option]
 sanitize opts = foldl (\o f -> f o) opts functions
   where
     functions = [

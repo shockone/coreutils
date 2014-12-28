@@ -6,15 +6,15 @@ import Data.String.Utils(replace)
 
 
 decorate :: FileContent -> Option -> FileContent
-decorate content ShowAll                 = undefined
+decorate _ ShowAll                 = undefined
 decorate content NumberNonBlank          = format $ enumerateNonBlank content
-decorate content ShowNonprintingAndEnds  = undefined
+decorate _ ShowNonprintingAndEnds  = undefined
 decorate content ShowEnds                = map (++ "$") content
 decorate content Number                  = format $ enumerate content
 decorate content SqueezeBlank            = removeRepeatedBlankLines content
-decorate content ShowNonprintingAndTabs  = undefined
+decorate _ ShowNonprintingAndTabs  = undefined
 decorate content ShowTabs                = map (replace "\t" "^I") content
-decorate content ShowNonprinting         = undefined
+decorate _ ShowNonprinting         = undefined
 decorate content U                       = content
 
 
@@ -53,7 +53,7 @@ formatLine paddingWidth (lineNumber, line) = pad lineNumber paddingWidth ++ line
 
 
 pad :: Maybe Int -> Int -> String
-pad Nothing maxPaddingWidth = ""
+pad Nothing _ = ""
 pad (Just number) maxPaddingWidth = padding ++ shownNumber ++ "\t"
   where
     padding = replicate paddingWidth ' '

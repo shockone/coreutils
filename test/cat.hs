@@ -1,15 +1,14 @@
-module Main (main, spec) where
+module Main (main, specs) where
 
 import Test.Hspec
 import System.Process
-import Data.Traversable(for)
 import Data.List
 
 main :: IO ()
-main = hspec spec
+main = hspec specs
 
-spec :: Spec
-spec = do
+specs :: Spec
+specs = do
   describe "options" $ providing params $ \paramsSet ->
     it ("gives the same result as the gnu cat for " ++ (intercalate " " paramsSet)) $ do
       myCatResult  <- (readProcess executablePath (paramsSet ++ [fixture "cat/example"]) [])
@@ -34,5 +33,5 @@ params :: [[String]]
 params = concatMap permutations $ subsequences ["-n", "-s", "-T", "-b", "-E"]
 
 
-providing :: [params] -> (params -> Spec) -> Spec
-providing params spec = sequence_ $ map spec params
+providing :: [d] -> (d -> Spec) -> Spec
+providing providedData spec = sequence_ $ map spec providedData
