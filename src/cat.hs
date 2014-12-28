@@ -59,6 +59,7 @@ sanitize opts = foldl (\o f -> f o) opts functions
   where
     functions = [
                   nub,
+                  \xs -> if elem ShowTabs xs then ShowTabs:(delete ShowTabs xs) else xs,
                   \xs -> if elem NumberNonBlank xs then delete Number xs else xs,
                   \xs -> if elem SqueezeBlank xs then SqueezeBlank:(delete SqueezeBlank xs) else xs
                 ]

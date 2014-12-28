@@ -53,8 +53,8 @@ formatLine paddingWidth (lineNumber, line) = pad lineNumber paddingWidth ++ line
 
 
 pad :: Maybe Int -> Int -> String
-pad Nothing maxPaddingWidth = replicate maxPaddingWidth ' ' ++ "  "
-pad (Just number) maxPaddingWidth = padding ++ shownNumber ++ "  "
+pad Nothing maxPaddingWidth = replicate maxPaddingWidth ' ' ++ "\t"
+pad (Just number) maxPaddingWidth = padding ++ shownNumber ++ "\t"
   where
     padding = replicate paddingWidth ' '
     paddingWidth = (maxPaddingWidth - length shownNumber + 3)
