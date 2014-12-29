@@ -14,24 +14,24 @@ main ∷ IO ()
 main = do
     (filePaths, options) <- parseArguments
     concatenatedContent  <- concatenate filePaths
-    let output = apply options concatenatedContent
+    let output = apply (concat options) concatenatedContent
         in putStr (unlines output)
 
 
-parseArguments ∷ IO ([String], [Option])
+parseArguments ∷ IO ([String], [Options])
 parseArguments = execParser argumentsParserWithInfo
 
 
-argumentsParserWithInfo ∷ ParserInfo ([String], [Option])
+argumentsParserWithInfo ∷ ParserInfo ([String], [Options])
 argumentsParserWithInfo = info (helper <*> argumentsParser) description
 
 
-description ∷ InfoMod ([String], [Option])
+description ∷ InfoMod ([String], [Options])
 description = fullDesc <> progDesc "Print a greeting for TARGET"
                        <> header "hello - a test for optparse-applicative"
 
 
-argumentsParser ∷ Parser ([String], [Option])
+argumentsParser ∷ Parser ([String], [Options])
 argumentsParser = (,) <$> filePaths <*> options
   where filePaths = some (argument str (metavar "FILES"))
         options   = many (Parsers.showAll

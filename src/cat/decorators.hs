@@ -6,16 +6,12 @@ import Data.String.Utils(replace)
 
 
 decorate :: [String] -> Option -> [String]
-decorate _ ShowAll                 = undefined
 decorate content NumberNonBlank          = format $ enumerateNonBlank content
-decorate _ ShowNonprintingAndEnds  = undefined
 decorate content ShowEnds                = map (++ "$") content
 decorate content Number                  = format $ enumerate content
 decorate content SqueezeBlank            = removeRepeatedBlankLines content
-decorate _ ShowNonprintingAndTabs  = undefined
 decorate content ShowTabs                = map (replace "\t" "^I") content
-decorate _ ShowNonprinting         = undefined
-decorate content U                       = content
+decorate _ ShowNonprinting               = undefined
 
 
 removeRepeatedBlankLines :: [String] -> [String]

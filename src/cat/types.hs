@@ -1,13 +1,10 @@
 module Cat.Types where
 
-data Option = ShowAll
-            | NumberNonBlank
-            | ShowNonprintingAndEnds
+data Option = NumberNonBlank
             | ShowEnds
             | Number
             | SqueezeBlank
-            | ShowNonprintingAndTabs
             | ShowTabs
             | ShowNonprinting
-            | U
             deriving (Eq)
+type Options = [Option]
