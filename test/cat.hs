@@ -10,7 +10,7 @@ main = hspec specs
 specs :: Spec
 specs = do
   describe "options" $ providing params $ \paramsSet ->
-    it ("gives the same result as the gnu cat for " ++ (intercalate " " paramsSet)) $ do
+    it ("Produces the same result as GNU cat for options " ++ (intercalate " " paramsSet) ++ ".") $ do
       myCatResult  <- (readProcess executablePath (paramsSet ++ [fixture "cat/example"]) [])
       gnuCatResult <- (readProcess "cat" (paramsSet ++ [fixture "cat/example"]) [])
       myCatResult `shouldBe` gnuCatResult
