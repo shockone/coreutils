@@ -5,7 +5,7 @@ import Control.Applicative((<*>))
 import Data.String.Utils(replace)
 
 
-decorate :: FileContent -> Option -> FileContent
+decorate :: [String] -> Option -> [String]
 decorate _ ShowAll                 = undefined
 decorate content NumberNonBlank          = format $ enumerateNonBlank content
 decorate _ ShowNonprintingAndEnds  = undefined
@@ -25,21 +25,21 @@ removeRepeatedBlankLines ("":"":rest) = removeRepeatedBlankLines ("":rest)
 removeRepeatedBlankLines (x:rest) = x:removeRepeatedBlankLines rest
 
 
-enumerateNonBlank :: FileContent -> [(Maybe Int, String)]
+enumerateNonBlank :: [String] -> [(Maybe Int, String)]
 enumerateNonBlank = numerator 1
 
 
-numerator :: Int -> FileContent -> [(Maybe Int, String)]
+numerator :: Int -> [String] -> [(Maybe Int, String)]
 numerator _ [] = []
 numerator n (l:rest) | null l = (Nothing, l) : numerator n rest
                      | otherwise = (Just n, l) : numerator (n+1) rest
 
 
-enumerate :: FileContent -> [(Maybe Int, String)]
+enumerate :: [String] -> [(Maybe Int, String)]
 enumerate = zip ([Just] <*> [1..])
 
 
-format :: [(Maybe Int, String)] -> FileContent
+format :: [(Maybe Int, String)] -> [String]
 format numbersWithRows = map (formatLine padding) numbersWithRows
   where padding = calculatePadding $ fromIntegral $ length numbersWithRows
 

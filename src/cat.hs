@@ -11,48 +11,48 @@ import Cat.Types
 
 
 main ∷ IO ()
-main = parseArguments >>= processArguments
+main = do
+    (filePaths, options) <- parseArguments
+    concatenatedContent  <- concatenate filePaths
+    let output = apply options concatenatedContent
+        in putStr (unlines output)
 
 
-parseArguments ∷ IO Arguments
+parseArguments ∷ IO ([String], [Option])
 parseArguments = execParser argumentsParserWithInfo
 
 
-argumentsParserWithInfo ∷ ParserInfo Arguments
+argumentsParserWithInfo ∷ ParserInfo ([String], [Option])
 argumentsParserWithInfo = info (helper <*> argumentsParser) description
 
 
-description ∷ InfoMod Arguments
+description ∷ InfoMod ([String], [Option])
 description = fullDesc <> progDesc "Print a greeting for TARGET"
                        <> header "hello - a test for optparse-applicative"
 
 
-argumentsParser ∷ Parser Arguments
-argumentsParser = Arguments
-  <$> some (argument str (metavar "FILES..."))
-  <*> many (Parsers.showAll
-        <|> Parsers.numberNonBlank
-        <|> Parsers.showNonprintingAndEnds
-        <|> Parsers.showEnds
-        <|> Parsers.number
-        <|> Parsers.squeezeBlank
-        <|> Parsers.showNonprintingAndTabs
-        <|> Parsers.showTabs
-        <|> Parsers.showNonprinting
-        <|> Parsers.u
-        )
+argumentsParser ∷ Parser ([String], [Option])
+argumentsParser = (,) <$> filePaths <*> options
+  where filePaths = some (argument str (metavar "FILES"))
+        options   = many (Parsers.showAll
+                      <|> Parsers.numberNonBlank
+                      <|> Parsers.showNonprintingAndEnds
+                      <|> Parsers.showEnds
+                      <|> Parsers.number
+                      <|> Parsers.squeezeBlank
+                      <|> Parsers.showNonprintingAndTabs
+                      <|> Parsers.showTabs
+                      <|> Parsers.showNonprinting
+                      <|> Parsers.u
+                         )
 
 
-processArguments ∷ Arguments → IO ()
-processArguments (Arguments filenames options) = concatenatedContent filenames >>= putStr . unlines . parse options
+concatenate ∷ [String] → IO [String]
+concatenate = mapM readFile >=> return . lines . join
 
 
-concatenatedContent ∷ [FilePath] → IO FileContent
-concatenatedContent = mapM readFile >=> return . lines . join
-
-
-parse ∷ [Option] → FileContent → FileContent
-parse opts content = foldl Decorators.decorate content (sanitize opts)
+apply ∷ [Option] → [String] → [String]
+apply opts content = foldl Decorators.decorate content (sanitize opts)
 
 
 sanitize ∷ [Option] → [Option]

@@ -1,8 +1,5 @@
 module Cat.Types where
 
-type Filename    = String
-type FileContent = [String]
-
 data Option = ShowAll
             | NumberNonBlank
             | ShowNonprintingAndEnds
@@ -14,5 +11,3 @@ data Option = ShowAll
             | ShowNonprinting
             | U
             deriving (Eq)
-
-data Arguments = Arguments [Filename] [Option]
