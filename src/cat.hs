@@ -14,12 +14,13 @@ main ∷ IO ()
 main = do
     (filePaths, options) <- parseArguments
     concatenatedContent  <- concatenate filePaths
-    let output = apply (concat options) concatenatedContent
+    let output = apply options concatenatedContent
         in putStr (unlines output)
 
 
-parseArguments ∷ IO ([String], [Options])
-parseArguments = execParser argumentsParserWithInfo
+parseArguments ∷ IO ([String], [Option])
+parseArguments = merge <$> execParser argumentsParserWithInfo
+    where merge (filePaths, options) = (filePaths, concat options)
 
 
 argumentsParserWithInfo ∷ ParserInfo ([String], [Options])
@@ -57,11 +58,9 @@ apply opts content = foldl Decorators.decorate content (sanitize opts)
 
 sanitize ∷ [Option] → [Option]
 sanitize opts = foldl (\o f -> f o) opts functions
-  where
-    functions = [
-                  nub,
-                  \xs -> if ShowTabs `elem` xs then ShowTabs:delete ShowTabs xs else xs,
-                  \xs -> if NumberNonBlank `elem` xs then delete Number xs else xs,
-                  \xs -> if SqueezeBlank `elem` xs then SqueezeBlank:delete SqueezeBlank xs else xs,
-                  \xs -> if ShowEnds `elem` xs then delete ShowEnds xs ++ [ShowEnds] else xs
-                ]
+  where functions = [ nub,
+                      \xs -> if ShowTabs `elem` xs then ShowTabs:delete ShowTabs xs else xs,
+                      \xs -> if NumberNonBlank `elem` xs then delete Number xs else xs,
+                      \xs -> if SqueezeBlank `elem` xs then SqueezeBlank:delete SqueezeBlank xs else xs,
+                      \xs -> if ShowEnds `elem` xs then delete ShowEnds xs ++ [ShowEnds] else xs
+                    ]

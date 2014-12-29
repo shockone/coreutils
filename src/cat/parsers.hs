@@ -7,48 +7,48 @@ import Cat.Types
 
 
 showAll :: Parser [Option]
-showAll = parser [ShowNonprinting, ShowEnds, ShowTabs] 'A' "show-all"  "equivalent to -vET"
+showAll = parser 'A' "show-all"  "equivalent to -vET" [ShowNonprinting, ShowEnds, ShowTabs]
 
 
 numberNonBlank :: Parser [Option]
-numberNonBlank = parser [NumberNonBlank] 'b' "number-nonblank" "number nonempty output lines, overrides -n"
+numberNonBlank = parser 'b' "number-nonblank" "number nonempty output lines, overrides -n" [NumberNonBlank]
 
 
 showNonprintingAndEnds :: Parser [Option]
-showNonprintingAndEnds = shortParser [ShowNonprinting, ShowEnds] 'e' "equivalent to -vE"
+showNonprintingAndEnds = shortParser 'e' "equivalent to -vE" [ShowNonprinting, ShowEnds]
 
 
 showEnds :: Parser [Option]
-showEnds = parser [ShowEnds] 'E' "show-ends" "display $ at end of each line"
+showEnds = parser 'E' "show-ends" "display $ at end of each line" [ShowEnds]
 
 
 number :: Parser [Option]
-number = parser [Number] 'n' "number" "number all output lines"
+number = parser 'n' "number" "number all output lines" [Number]
 
 
 squeezeBlank :: Parser [Option]
-squeezeBlank = parser [SqueezeBlank] 's' "squeeze-blank" "suppress repeated empty output lines"
+squeezeBlank = parser 's' "squeeze-blank" "suppress repeated empty output lines" [SqueezeBlank]
 
 
 showNonprintingAndTabs :: Parser [Option]
-showNonprintingAndTabs = shortParser [ShowNonprinting, ShowTabs] 't' "equivalent to -vT"
+showNonprintingAndTabs = shortParser 't' "equivalent to -vT" [ShowNonprinting, ShowTabs]
 
 
 showTabs :: Parser [Option]
-showTabs = parser [ShowTabs] 'T' "show-tabs" "display TAB characters as ^I"
+showTabs = parser 'T' "show-tabs" "display TAB characters as ^I" [ShowTabs]
 
 
 showNonprinting :: Parser [Option]
-showNonprinting = parser [ShowNonprinting] 'v' "show-nonprinting" "use ^ and M- notation, except for LFD and TAB"
+showNonprinting = parser 'v' "show-nonprinting" "use ^ and M- notation, except for LFD and TAB" [ShowNonprinting]
 
 
 u :: Parser [Option]
-u = shortParser [] 'u' "(ignored)"
+u = shortParser 'u' "(ignored)" []
 
 
-parser :: [Option] -> Char -> String -> String -> Parser [Option]
-parser f s l h = flag' f $ short s <> help h <> long l
+parser :: Char -> String -> String -> [Option] -> Parser [Option]
+parser s l h o= flag' o $ short s <> help h <> long l
 
 
-shortParser :: [Option] -> Char -> String -> Parser [Option]
-shortParser f s h = flag' f $ short s <> help h
+shortParser :: Char -> String -> [Option] -> Parser [Option]
+shortParser s h o = flag' o $ short s <> help h
