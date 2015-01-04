@@ -7,4 +7,3 @@ data Option = NumberNonBlank
             | ShowTabs
             | ShowNonprinting
             deriving (Eq)
-type Options = [Option]

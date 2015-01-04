@@ -24,16 +24,16 @@ parseArguments = merge <$> execParser argumentsParserWithInfo
     where merge (filePaths, options) = (filePaths, concat options)
 
 
-argumentsParserWithInfo ∷ ParserInfo ([String], [Options])
+argumentsParserWithInfo ∷ ParserInfo ([String], [[Option]])
 argumentsParserWithInfo = info (helper <*> argumentsParser) description
 
 
-description ∷ InfoMod ([String], [Options])
+description ∷ InfoMod ([String], [[Option]])
 description = fullDesc <> progDesc "Print a greeting for TARGET"
                        <> header "hello - a test for optparse-applicative"
 
 
-argumentsParser ∷ Parser ([String], [Options])
+argumentsParser ∷ Parser ([String], [[Option]])
 argumentsParser = (,) <$> filePathsParser <*> optionsParser
 
 
@@ -41,7 +41,7 @@ filePathsParser ∷ Parser [String]
 filePathsParser = some (argument str (metavar "FILES"))
 
 
-optionsParser ∷ Parser [Options]
+optionsParser ∷ Parser [[Option]]
 optionsParser = many optionPa
     where optionPa = parser      'A'  "show-all"          "equivalent to -vET"                            [ShowNonprinting, ShowEnds, ShowTabs]
                  <|> parser      'b'  "number-nonblank"   "number nonempty output lines, overrides -n"    [NumberNonBlank]
