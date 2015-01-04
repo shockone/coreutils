@@ -15,11 +15,15 @@ import           Prelude                    hiding (concat, concatMap, null,
 
 decorate :: ByteString -> Option -> ByteString
 decorate content NumberNonBlank  = splitting content (format . enumerateNonBlank)
-decorate content ShowEnds        = toStrict $ S.replace (pack "\n") (pack "$\n") content
+decorate content ShowEnds        = replace "\n" "$\n" content
 decorate content Number          = splitting content (format . enumerate)
 decorate content SqueezeBlank    = splitting content removeRepeatedBlankLines
-decorate content ShowTabs        = splitting content $ map (toStrict . S.replace (pack "\t") (pack "^I"))
+decorate content ShowTabs        = replace "\t" "^I" content
 decorate content ShowNonprinting = splitting content $ map (concatMap np)
+
+
+replace :: String -> String -> ByteString -> ByteString
+replace from to content = toStrict $ S.replace (pack from) (pack to) content
 
 
 toStrict :: BL.ByteString -> ByteString
