@@ -29,8 +29,8 @@ projectPath :: FilePath
 projectPath = "/Users/me/dev/haskell/coreutils/"
 
 params :: [[String]]
---params = concatMap permutations $ subsequences ["-A", "-b", "-e", "-E", "-n", "-s", "-t", "-T", "-u", "-v"]
-params = concatMap permutations $ subsequences ["-n", "-s", "-T", "-b", "-E"]
+--params =  subsequences ["-A", "-b", "-e", "-E", "-n", "-s", "-t", "-T", "-u", "-v"]
+params = concatMap permutations $ subsequences ["-n", "-s", "-T", "-b", "-E", "-v"]
 
 
 providing :: [d] -> (d -> Spec) -> Spec

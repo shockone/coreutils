@@ -75,8 +75,10 @@ executable cat
   hs-source-dirs:   src
   main-is:          cat.hs
   build-depends:    base == 4.7.*,
+                    bytestring,
                     optparse-applicative == 0.11.*,
-                    MissingH == 1.3.*
+                    MissingH == 1.3.*,
+                    stringsearch == 0.3.*
   default-language: Haskell2010
   ghc-options:      -Wall -fno-warn-name-shadowing -O2
 

@@ -1,8 +1,9 @@
 {-# LANGUAGE UnicodeSyntax #-}
 module Main where
 
-import Control.Monad
+--import Control.Monad
 import Data.List           (delete, nub)
+import qualified Data.ByteString as BS
 import Options.Applicative
 
 import Cat.Decorators as Decorators
@@ -15,7 +16,7 @@ main = do
     (filePaths, options) <- parseArguments
     concatenatedContent  <- concatenate filePaths
     let output = apply options concatenatedContent
-        in putStr (unlines output)
+        in BS.putStr output
 
 
 parseArguments ∷ IO ([String], [Option])
@@ -33,10 +34,16 @@ description = fullDesc <> progDesc "Print a greeting for TARGET"
 
 
 argumentsParser ∷ Parser ([String], [Options])
-argumentsParser = (,) <$> filePaths <*> options
-  where filePaths = some (argument str (metavar "FILES"))
-        options   = many single
-        single    =  parser      'A'  "show-all"          "equivalent to -vET"                            [ShowNonprinting, ShowEnds, ShowTabs]
+argumentsParser = (,) <$> filePathsParser <*> optionsParser
+
+
+filePathsParser ∷ Parser [String]
+filePathsParser = some (argument str (metavar "FILES"))
+
+
+optionsParser ∷ Parser [Options]
+optionsParser = many optionPa
+    where optionPa = parser      'A'  "show-all"          "equivalent to -vET"                            [ShowNonprinting, ShowEnds, ShowTabs]
                  <|> parser      'b'  "number-nonblank"   "number nonempty output lines, overrides -n"    [NumberNonBlank]
                  <|> shortParser 'e'                      "equivalent to -vE"                             [ShowNonprinting, ShowEnds]
                  <|> parser      'E'  "show-ends"         "display $ at end of each line"                 [ShowEnds]
@@ -48,11 +55,13 @@ argumentsParser = (,) <$> filePaths <*> options
                  <|> parser      'v'  "show-nonprinting"  "use ^ and M- notation, except for LFD and TAB" [ShowNonprinting]
 
 
-concatenate ∷ [String] → IO [String]
-concatenate = mapM readFile >=> return . lines . join
+concatenate ∷ [String] → IO BS.ByteString
+concatenate filePaths = do
+    fileContent <- mapM BS.readFile filePaths
+    return $ foldl1 BS.append fileContent
 
 
-apply ∷ [Option] → [String] → [String]
+apply ∷ [Option] → BS.ByteString → BS.ByteString
 apply opts content = foldl Decorators.decorate content (sanitize opts)
 
 
