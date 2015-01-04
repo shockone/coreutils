@@ -10,10 +10,20 @@ main = hspec specs
 
 specs :: Spec
 specs = do
-  describe "options" $ providing params $ \paramsSet ->
-    it ("Produces the same result as GNU cat for options " ++ (intercalate " " paramsSet) ++ ".") $ do
+  describe "options" $ providing params $ \paramsSet -> do
+    let options = intercalate " " paramsSet
+        stdin   = BS.empty
+
+    it ("Produces the same result as GNU cat for options " ++ options ++ ".") $ do
+      let parameters = (paramsSet ++ ["/usr/local/opt/coreutils/libexec/gnubin/cat"])
+
+      (_, myCatResult, _)  <- (readProcessWithExitCode executablePath parameters stdin)
+      (_, gnuCatResult, _) <- (readProcessWithExitCode "cat" parameters stdin)
+      myCatResult `shouldBe` gnuCatResult
+
+    it ("Produces the same result as GNU cat for a binary file with options " ++ options ++ ".") $ do
       let parameters = (paramsSet ++ [fixture "cat/example"])
-          stdin = BS.empty
+
       (_, myCatResult, _)  <- (readProcessWithExitCode executablePath parameters stdin)
       (_, gnuCatResult, _) <- (readProcessWithExitCode "cat" parameters stdin)
       myCatResult `shouldBe` gnuCatResult
