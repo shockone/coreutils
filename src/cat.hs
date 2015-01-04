@@ -1,10 +1,10 @@
 {-# LANGUAGE UnicodeSyntax #-}
 module Main where
 
---import Control.Monad
+import Data.ByteString     (ByteString, append, putStr, readFile)
 import Data.List           (delete, nub)
-import qualified Data.ByteString as BS
 import Options.Applicative
+import Prelude             hiding (putStr, readFile)
 
 import Cat.Decorators as Decorators
 import Cat.Parsers
@@ -16,7 +16,7 @@ main = do
     (filePaths, options) <- parseArguments
     concatenatedContent  <- concatenate filePaths
     let output = apply options concatenatedContent
-        in BS.putStr output
+        in putStr output
 
 
 parseArguments ∷ IO ([String], [Option])
@@ -55,13 +55,13 @@ optionsParser = many optionPa
                  <|> parser      'v'  "show-nonprinting"  "use ^ and M- notation, except for LFD and TAB" [ShowNonprinting]
 
 
-concatenate ∷ [String] → IO BS.ByteString
+concatenate ∷ [String] → IO ByteString
 concatenate filePaths = do
-    fileContent <- mapM BS.readFile filePaths
-    return $ foldl1 BS.append fileContent
+    fileContent <- mapM readFile filePaths
+    return $ foldl1 append fileContent
 
 
-apply ∷ [Option] → BS.ByteString → BS.ByteString
+apply ∷ [Option] → ByteString → ByteString
 apply opts content = foldl Decorators.decorate content (sanitize opts)
 
 
