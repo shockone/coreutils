@@ -87,4 +87,4 @@ Test-Suite spec-cat
   Default-Language:     Haskell2010
   hs-source-dirs:       test
   Main-Is:              cat.hs
-  Build-Depends:        base == 4.7.*, hspec, process
+  Build-Depends:        base == 4.7.*, hspec, process-extras

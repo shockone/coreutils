@@ -10,18 +10,19 @@ import qualified Data.ByteString.Search.DFA as S
 
 decorate :: BS.ByteString -> Option -> BS.ByteString
 decorate content NumberNonBlank  = splitting content (format . enumerateNonBlank)
-decorate content ShowEnds        = splitting content $ map (flip BS.append (BS.pack "$"))
+decorate content ShowEnds        = toStrict $ S.replace (BS.pack "\n") (BS.pack "$\n") content
 decorate content Number          = splitting content (format . enumerate)
 decorate content SqueezeBlank    = splitting content removeRepeatedBlankLines
-decorate content ShowTabs        = splitting content $ map (toStrict1 . S.replace (BS.pack "\t") (BS.pack "^I"))
+decorate content ShowTabs        = splitting content $ map (toStrict . S.replace (BS.pack "\t") (BS.pack "^I"))
 decorate content ShowNonprinting = splitting content $ map (BS.concatMap np)
 
-toStrict1 :: BL.ByteString -> BS.ByteString
-toStrict1 = BS.concat . BL.toChunks
+toStrict :: BL.ByteString -> BS.ByteString
+toStrict = BS.concat . BL.toChunks
 
 splitting :: BS.ByteString -> ([BS.ByteString] -> [BS.ByteString]) -> BS.ByteString
-splitting byteString f = BS.unlines $ f $ if BS.null (last split) then init split else split
-    where split = BS.split '\n' byteString
+splitting byteString f = if BS.last output == '\n' then BS.init output else output
+    where split  = BS.split '\n' byteString
+          output = BS.unlines $ f $ if BS.null (last split) then init split else split
 
 
 np :: Char -> BS.ByteString
@@ -74,5 +75,5 @@ pad Nothing _ = BS.pack ""
 pad (Just number) maxPaddingWidth = foldl1 BS.append [padding, BS.pack shownNumber, BS.pack "\t"]
   where
     padding = BS.pack $ replicate paddingWidth ' '
-    paddingWidth = (maxPaddingWidth - length shownNumber + 3)
+    paddingWidth = (maxPaddingWidth - length shownNumber)
     shownNumber = show number
