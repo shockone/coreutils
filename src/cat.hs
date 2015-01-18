@@ -5,7 +5,6 @@ import Data.ByteString     (ByteString, append, putStr, readFile, empty, getCont
 import Data.List           (delete, nub)
 import Options.Applicative hiding (empty)
 import Prelude             hiding (putStr, readFile, getContents)
-import System.IO           (hSetBuffering, stdin, stdout, BufferMode(..))
 
 
 import Cat.Decorators as Decorators
@@ -15,8 +14,6 @@ import Cat.Types
 
 main ∷ IO ()
 main = do
-    hSetBuffering stdin LineBuffering
-    hSetBuffering stdout LineBuffering
     (filePaths, options) <- parseArguments
     concatenatedContent  <- if not (null filePaths)
                               then concatenate filePaths
