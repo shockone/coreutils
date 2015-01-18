@@ -16,7 +16,7 @@ main ∷ IO ()
 main = do
     (filePaths, options) <- parseArguments
     concatenatedContent  <- if not (null filePaths)
-                              then concatenate filePaths
+                              then concatenateContent filePaths
                               else getContents
     putStr $ apply options concatenatedContent
 
@@ -57,8 +57,8 @@ optionsParser = many optionPa
                  <|> parser      'v'  "show-nonprinting"  "use ^ and M- notation, except for LFD and TAB" [ShowNonprinting]
 
 
-concatenate ∷ [String] → IO ByteString
-concatenate filePaths = do
+concatenateContent ∷ [FilePath] → IO ByteString
+concatenateContent filePaths = do
     fileContent <- mapM readFile filePaths
     return $ foldl append empty fileContent
 
