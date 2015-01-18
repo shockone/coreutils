@@ -1,10 +1,12 @@
 {-# LANGUAGE UnicodeSyntax #-}
 module Main where
 
-import Data.ByteString     (ByteString, append, putStr, readFile)
+import Data.ByteString     (ByteString, append, putStr, readFile, empty, getContents)
 import Data.List           (delete, nub)
-import Options.Applicative
-import Prelude             hiding (putStr, readFile)
+import Options.Applicative hiding (empty)
+import Prelude             hiding (putStr, readFile, getContents)
+import System.IO           (hSetBuffering, stdin, stdout, BufferMode(..))
+
 
 import Cat.Decorators as Decorators
 import Cat.Parsers
@@ -13,10 +15,13 @@ import Cat.Types
 
 main ∷ IO ()
 main = do
+    hSetBuffering stdin LineBuffering
+    hSetBuffering stdout LineBuffering
     (filePaths, options) <- parseArguments
-    concatenatedContent  <- concatenate filePaths
-    let output = apply options concatenatedContent
-        in putStr output
+    concatenatedContent  <- if not (null filePaths)
+                              then concatenate filePaths
+                              else getContents
+    putStr $ apply options concatenatedContent
 
 
 parseArguments ∷ IO ([String], [Option])
@@ -38,7 +43,7 @@ argumentsParser = (,) <$> filePathsParser <*> optionsParser
 
 
 filePathsParser ∷ Parser [String]
-filePathsParser = some (argument str (metavar "FILES"))
+filePathsParser = many (argument str (metavar "FILES"))
 
 
 optionsParser ∷ Parser [[Option]]
@@ -58,7 +63,7 @@ optionsParser = many optionPa
 concatenate ∷ [String] → IO ByteString
 concatenate filePaths = do
     fileContent <- mapM readFile filePaths
-    return $ foldl1 append fileContent
+    return $ foldl append empty fileContent
 
 
 apply ∷ [Option] → ByteString → ByteString
