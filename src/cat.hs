@@ -1,10 +1,15 @@
 {-# LANGUAGE UnicodeSyntax #-}
 module Main where
 
+import Control.Monad.Loops (firstM)
 import Data.ByteString     (ByteString, append, putStr, readFile, empty, getContents)
 import Data.List           (delete, nub)
+import Data.Maybe          (isJust, fromJust)
 import Options.Applicative hiding (empty)
 import Prelude             hiding (putStr, readFile, getContents)
+import System.Posix hiding (append)
+import System.Posix.Handle (hGetStatus)
+import GHC.IO.Handle.FD    (stdout)
 
 
 import Cat.Decorators as Decorators
@@ -15,6 +20,7 @@ import Cat.Types
 main ∷ IO ()
 main = do
     (filePaths, options) <- parseArguments
+    ensureInputIsNotOutput filePaths
     concatenatedContent  <- if not (null filePaths)
                               then concatenateContent filePaths
                               else getContents
@@ -75,3 +81,14 @@ sanitize opts = foldl (\o f -> f o) opts functions
                       \xs -> if SqueezeBlank `elem` xs then SqueezeBlank:delete SqueezeBlank xs else xs,
                       \xs -> if ShowEnds `elem` xs then delete ShowEnds xs ++ [ShowEnds] else xs
                     ]
+
+ensureInputIsNotOutput :: [FilePath] -> IO ()
+ensureInputIsNotOutput paths = do
+    stdoutFstats <- hGetStatus stdout
+    let stdoutFileID = fileID stdoutFstats
+
+    match <- (flip firstM) paths $ \path -> getFileStatus path >>= return . fileID >>= \fid -> return (fid == stdoutFileID)
+
+    if isJust match
+      then error $ fromJust match ++ ": input file is output file"
+      else return ()
