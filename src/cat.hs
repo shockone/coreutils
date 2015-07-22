@@ -3,7 +3,7 @@ module Main where
 
 import Control.Monad.Loops (firstM)
 import Data.ByteString     (ByteString, append, putStr, readFile, empty, getContents)
-import Data.List           (delete, nub)
+import Data.List           (delete, sort)
 import Data.Maybe          (isJust, fromJust)
 import Options.Applicative hiding (empty)
 import Prelude             hiding (putStr, readFile, getContents)
@@ -15,6 +15,7 @@ import GHC.IO.Handle.FD    (stdout)
 import Cat.Decorators as Decorators
 import Cat.Parsers
 import Cat.Types
+import Utils
 
 
 main ∷ IO ()
@@ -74,13 +75,9 @@ apply = foldl Decorators.decorate
 
 
 sanitize ∷ [Option] → [Option]
-sanitize opts = foldl (\o f -> f o) opts functions
-  where functions = [ nub,
-                      \xs -> if ShowTabs `elem` xs then ShowTabs:delete ShowTabs xs else xs,
-                      \xs -> if NumberNonBlank `elem` xs then delete Number xs else xs,
-                      \xs -> if SqueezeBlank `elem` xs then SqueezeBlank:delete SqueezeBlank xs else xs,
-                      \xs -> if ShowEnds `elem` xs then delete ShowEnds xs ++ [ShowEnds] else xs
-                    ]
+sanitize opts | [NumberNonBlank, Number] `elems` opts = sanitize $ delete Number opts
+              | otherwise = sort opts
+
 
 ensureInputIsNotOutput :: [FilePath] -> IO ()
 ensureInputIsNotOutput paths = do

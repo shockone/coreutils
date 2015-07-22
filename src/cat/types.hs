@@ -1,9 +1,9 @@
 module Cat.Types where
 
-data Option = NumberNonBlank
-            | ShowEnds
-            | Number
+data Option = ShowTabs
+            | NumberNonBlank
             | SqueezeBlank
-            | ShowTabs
+            | Number
             | ShowNonprinting
-            deriving (Eq)
+            | ShowEnds
+            deriving (Eq, Ord)
