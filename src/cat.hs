@@ -24,7 +24,7 @@ main = do
     concatenatedContent  <- if not (null filePaths)
                               then concatenateContent filePaths
                               else getContents
-    putStr $ apply options concatenatedContent
+    putStr $ apply concatenatedContent $ sanitize options
 
 
 parseArguments ∷ IO ([String], [Option])
@@ -69,8 +69,8 @@ concatenateContent filePaths = do
     return $ foldl append empty fileContent
 
 
-apply ∷ [Option] → ByteString → ByteString
-apply opts content = foldl Decorators.decorate content (sanitize opts)
+apply ∷ ByteString → [Option] → ByteString
+apply = foldl Decorators.decorate
 
 
 sanitize ∷ [Option] → [Option]
